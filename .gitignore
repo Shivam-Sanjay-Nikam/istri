@@ -1,0 +1,9 @@
+node_modules/
+.env
+.DS_Store
+dist/
+.vscode/
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+supabase/functions/**/.env
