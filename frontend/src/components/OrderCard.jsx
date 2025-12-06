@@ -36,10 +36,15 @@ export default function OrderCard({ order, isAdmin, onUpdateStatus }) {
                     <MapPin size={16} className="mt-0.5 text-slate-400" />
                     <span>{order.address}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                    <Phone size={16} className="text-slate-400" />
-                    <span>{order.phone}</span>
-                </div>
+                <a
+                    href={`tel:${order.phone}`}
+                    className="flex items-center gap-2 text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md transition-colors w-fit"
+                    title="Call Customer"
+                >
+                    <Phone size={16} />
+                    <span className="font-medium">{order.phone}</span>
+                    <span className="text-xs bg-white px-1.5 rounded border border-blue-200 text-blue-500">Call</span>
+                </a>
                 <div className="flex items-start gap-2 col-span-1 md:col-span-2">
                     <div className="grid grid-cols-2 gap-4 w-full bg-slate-50 p-3 rounded-md">
                         <div>
