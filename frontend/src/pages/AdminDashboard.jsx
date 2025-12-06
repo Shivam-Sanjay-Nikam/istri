@@ -125,7 +125,13 @@ export default function AdminDashboard() {
                     onClick={() => setActiveTab('orders')}
                     className={`pb-2 px-1 whitespace-nowrap ${activeTab === 'orders' ? 'border-b-2 border-blue-500 text-blue-600 font-medium' : 'text-slate-500'}`}
                 >
-                    Orders
+                    Active Orders
+                </button>
+                <button
+                    onClick={() => setActiveTab('history')}
+                    className={`pb-2 px-1 whitespace-nowrap ${activeTab === 'history' ? 'border-b-2 border-green-500 text-green-600 font-medium' : 'text-slate-500'}`}
+                >
+                    History (Paid)
                 </button>
                 <button
                     onClick={() => setActiveTab('slots')}
@@ -137,9 +143,24 @@ export default function AdminDashboard() {
 
             {activeTab === 'orders' && (
                 <div className="space-y-4">
-                    <h2 className="text-xl font-semibold mb-4">All Orders</h2>
-                    {orders.length === 0 && <p className="text-slate-500">No orders found.</p>}
-                    {orders.map(order => (
+                    <h2 className="text-xl font-semibold mb-4">Active Orders</h2>
+                    {orders.filter(o => o.status !== 'Paid').length === 0 && <p className="text-slate-500">No active orders.</p>}
+                    {orders.filter(o => o.status !== 'Paid').map(order => (
+                        <OrderCard
+                            key={order.id}
+                            order={order}
+                            isAdmin
+                            onUpdateStatus={handleUpdateStatus}
+                        />
+                    ))}
+                </div>
+            )}
+
+            {activeTab === 'history' && (
+                <div className="space-y-4">
+                    <h2 className="text-xl font-semibold mb-4">Paid / Completed Orders</h2>
+                    {orders.filter(o => o.status === 'Paid').length === 0 && <p className="text-slate-500">No paid orders yet.</p>}
+                    {orders.filter(o => o.status === 'Paid').map(order => (
                         <OrderCard
                             key={order.id}
                             order={order}
