@@ -2,6 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .animate-ironing {
+    animation: ironing 2s ease-in-out infinite;
+  }
+
+  .animate-steam-1 {
+    animation: steam 2s ease-out infinite 0.5s;
+  }
+
+  .animate-steam-2 {
+    animation: steam 2s ease-out infinite 1s;
+  }
+
+  @keyframes ironing {
+
+    0%,
+    100% {
+      transform: translateX(-10px) rotate(-5deg);
+    }
+
+    50% {
+      transform: translateX(10px) rotate(5deg);
+    }
+  }
+
+  @keyframes steam {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 0;
+    }
+
+    50% {
+      opacity: 0.6;
+    }
+
+    100% {
+      transform: translateY(-20px) scale(2);
+      opacity: 0;
+    }
+  }
+}
+
 @layer base {
   body {
     @apply antialiased text-slate-900 bg-slate-50;

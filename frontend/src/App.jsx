@@ -8,12 +8,16 @@ const TrackOrder = lazy(() => import('./pages/TrackOrder'))
 const AdminLogin = lazy(() => import('./pages/AdminLogin'))
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'))
 
+import Loader from './components/Loader'
+
+// ... imports ...
+
 function App() {
     return (
         <BrowserRouter>
             <Suspense fallback={
                 <div className="min-h-screen flex items-center justify-center bg-slate-50">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                    <Loader />
                 </div>
             }>
                 <Routes>
