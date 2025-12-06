@@ -11,7 +11,15 @@ serve(async (req) => {
         const supabase = createServiceRoleClient()
 
         // 1. Auto-delete past slots (older than today)
-        const todayStr = new Date().toISOString().split('T')[0]
+        // 1. Auto-delete past slots (older than today)
+        const today = new Date()
+        const todayStr = today.toISOString().split('T')[0]
+
+        // "Current date + 48 hrs" roughly implies covering today, tomorrow, and potentially part of day after
+        const limitDate = new Date(today)
+        limitDate.setDate(today.getDate() + 2)
+        const limitStr = limitDate.toISOString().split('T')[0]
+
         await supabase
             .from('slots')
             .delete()
@@ -22,6 +30,7 @@ serve(async (req) => {
             .select('*')
             .eq('is_active', true)
             .gte('date', todayStr)
+            .lte('date', limitStr)
             .order('date', { ascending: true })
 
         if (error) throw error
