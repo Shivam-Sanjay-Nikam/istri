@@ -31,6 +31,7 @@ export default function AdminDashboard() {
         startTime: '',
         endTime: ''
     })
+    const [isRecurring, setIsRecurring] = useState(false) // New State
 
     // Auth check
     useEffect(() => {
@@ -113,26 +114,34 @@ export default function AdminDashboard() {
         const slotPayload = {
             slot_type: newSlot.slot_type,
             date: newSlot.date,
-            time: timeRange
+            time: timeRange,
+            repeat_days: isRecurring ? 30 : 0
         }
 
-        // Optimistic UI Update
+        // Optimistic UI Update (Show at least the first one immediately)
         const optimisticId = Math.random().toString(36).substr(2, 9)
-        const optimisticSlot = { ...slotPayload, id: optimisticId, is_active: true }
+        const optimisticSlot = {
+            slot_type: newSlot.slot_type,
+            date: newSlot.date,
+            time: timeRange,
+            id: optimisticId,
+            is_active: true
+        }
 
         setSlots(prev => ({
             ...prev,
             [newSlot.slot_type]: [...(prev[newSlot.slot_type] || []), optimisticSlot]
         }))
 
-        showToast('Slot added (saving...)')
+        showToast(isRecurring ? 'Adding recurring slots (this may take a moment)...' : 'Slot added (saving...)')
         setIsAddSlotOpen(false)
-        setNewSlot({ slot_type: 'pickup', date: '', startTime: '', endTime: '' }) // Reset
+        setNewSlot({ slot_type: 'pickup', date: '', startTime: '', endTime: '' })
+        setIsRecurring(false)
 
         try {
             await adminAddSlot(slotPayload)
-            showToast('Slot saved successfully!')
-            // Reload to get real ID
+            showToast(isRecurring ? '30 days of slots added!' : 'Slot saved successfully!')
+            // Reload to get real IDs and all generated slots
             const updatedSlots = await getSlots()
             setSlots(updatedSlots)
         } catch (error) {
@@ -353,6 +362,18 @@ export default function AdminDashboard() {
                             onChange={e => setNewSlot({ ...newSlot, endTime: e.target.value })}
                             required
                         />
+                    </div>
+                    <div className="flex items-center gap-2 pt-2">
+                        <input
+                            type="checkbox"
+                            id="recurring"
+                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4 cursor-pointer"
+                            checked={isRecurring}
+                            onChange={e => setIsRecurring(e.target.checked)}
+                        />
+                        <label htmlFor="recurring" className="text-sm text-slate-700 select-none cursor-pointer">
+                            Repeat daily for next 30 days
+                        </label>
                     </div>
                     <div className="pt-2 flex gap-3">
                         <button

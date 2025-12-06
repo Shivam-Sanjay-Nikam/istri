@@ -10,12 +10,29 @@ serve(async (req) => {
 
     try {
         await verifyAdmin(req)
-        const { slot_type, date, time } = await req.json()
+        const { slot_type, date, time, repeat_days } = await req.json()
+
+        const slotsToInsert = []
+        const startDate = new Date(date)
+        const iterations = repeat_days && repeat_days > 0 ? repeat_days : 1
+
+        for (let i = 0; i < iterations; i++) {
+            const currentDate = new Date(startDate)
+            currentDate.setDate(startDate.getDate() + i)
+            // Format YYYY-MM-DD
+            const dateStr = currentDate.toISOString().split('T')[0]
+
+            slotsToInsert.push({
+                slot_type,
+                date: dateStr,
+                time
+            })
+        }
 
         const supabase = createServiceRoleClient()
         const { data, error } = await supabase
             .from('slots')
-            .insert([{ slot_type, date, time }])
+            .insert(slotsToInsert)
             .select()
 
         if (error) throw error
