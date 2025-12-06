@@ -3,6 +3,7 @@ import Layout from '../components/Layout'
 import InputField from '../components/InputField'
 import OrderCard from '../components/OrderCard'
 import { getOrdersByPhone } from '../api/orderApi'
+import Loader from '../components/Loader'
 import { Search } from 'lucide-react'
 
 export default function TrackOrder() {
@@ -49,10 +50,10 @@ export default function TrackOrder() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="bg-blue-600 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-700 transition flex items-center gap-2 mb-[1px]"
+                            className="bg-blue-600 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-700 transition flex items-center gap-2 mb-[1px] disabled:opacity-70"
                         >
                             <Search size={18} />
-                            {loading ? 'Searching...' : 'Track'}
+                            Track
                         </button>
                     </form>
                 </div>
@@ -60,7 +61,13 @@ export default function TrackOrder() {
                 {error && <div className="text-red-600 mb-4">{error}</div>}
 
                 <div className="space-y-4">
-                    {searched && orders.length === 0 && (
+                    {loading && (
+                        <div className="py-12 border rounded-lg bg-slate-50 border-dashed border-slate-200">
+                            <Loader small />
+                        </div>
+                    )}
+
+                    {!loading && searched && orders.length === 0 && (
                         <p className="text-center text-slate-500 py-8">No orders found for this number.</p>
                     )}
 

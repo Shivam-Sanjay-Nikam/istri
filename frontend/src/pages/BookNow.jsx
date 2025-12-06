@@ -225,13 +225,21 @@ export default function BookNow() {
                     )}
 
                     <div className="pt-4 pb-8">
-                        <button
-                            type="submit"
-                            disabled={submitting}
-                            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                        >
-                            {submitting ? 'Booking...' : `Confirm Booking • ₹${totalCost}`}
-                        </button>
+                        <div className="pt-4 pb-8">
+                            {submitting ? (
+                                <div className="py-4 bg-slate-50 rounded-lg border border-slate-100">
+                                    <Loader small />
+                                    <p className="text-center text-sm text-slate-500 mt-2">Confirming your booking...</p>
+                                </div>
+                            ) : (
+                                <button
+                                    type="submit"
+                                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                                >
+                                    {`Confirm Booking • ₹${totalCost}`}
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </form>
             </div>
