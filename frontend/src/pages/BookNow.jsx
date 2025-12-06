@@ -136,7 +136,10 @@ export default function BookNow() {
             <div className="max-w-2xl mx-auto">
                 <div className="mb-6">
                     <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Book Service</h1>
-                    <p className="text-slate-500 mt-1">Schedule your pickup and dropoff.</p>
+                    <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm font-medium">
+                        ✨ Specialty: Premium Ironing @ ₹8/piece
+                    </div>
+                    <p className="text-slate-500 mt-2">Schedule your pickup and dropoff.</p>
                 </div>
 
                 {error && (
