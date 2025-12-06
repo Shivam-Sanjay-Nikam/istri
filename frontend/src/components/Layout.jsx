@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Shirt, Menu, X, User } from 'lucide-react'
+import { Shirt, Menu, X, Search } from 'lucide-react'
 
 export default function Layout({ children }) {
     const [isOpen, setIsOpen] = React.useState(false)
@@ -11,9 +11,6 @@ export default function Layout({ children }) {
         { name: 'Track Order', path: '/track' },
         { name: 'Admin', path: '/admin-login' },
     ]
-
-    // If already in /admin-dashboard, maybe show different nav or handled by protected route?
-    // For now keep simple.
 
     return (
         <div className="min-h-screen flex flex-col bg-slate-50">
@@ -36,8 +33,8 @@ export default function Layout({ children }) {
                                     key={nav.path}
                                     to={nav.path}
                                     className={`px-1 pt-1 text-sm font-medium border-b-2 transition-colors ${location.pathname === nav.path
-                                            ? 'border-blue-500 text-slate-900'
-                                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                                        ? 'border-blue-500 text-slate-900'
+                                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
                                         }`}
                                 >
                                     {nav.name}
@@ -46,7 +43,14 @@ export default function Layout({ children }) {
                         </div>
 
                         {/* Mobile Menu Button */}
-                        <div className="flex items-center sm:hidden">
+                        <div className="flex items-center gap-4 sm:hidden">
+                            <Link
+                                to="/track"
+                                className="text-slate-500 hover:text-slate-700 p-1"
+                                title="Track Order"
+                            >
+                                <Search size={22} />
+                            </Link>
                             <button
                                 onClick={() => setIsOpen(!isOpen)}
                                 className="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-slate-500 hover:bg-slate-100 focus:outline-none"
@@ -67,8 +71,8 @@ export default function Layout({ children }) {
                                     to={nav.path}
                                     onClick={() => setIsOpen(false)}
                                     className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${location.pathname === nav.path
-                                            ? 'bg-blue-50 border-blue-500 text-blue-700'
-                                            : 'border-transparent text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-700'
+                                        ? 'bg-blue-50 border-blue-500 text-blue-700'
+                                        : 'border-transparent text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-700'
                                         }`}
                                 >
                                     {nav.name}
