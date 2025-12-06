@@ -92,27 +92,44 @@ export default function AdminDashboard() {
         }
     }
 
+    // Stats calculation
+    const today = new Date().toISOString().split('T')[0]
+    const todaysOrders = orders.filter(o => o.created_at.startsWith(today))
+    const todaysIncome = todaysOrders.reduce((sum, order) => sum + (order.num_clothes * 8), 0)
+
     if (loading) return <Layout><div className="text-center py-20">Loading Dashboard...</div></Layout>
 
     return (
         <Layout>
-            <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold text-slate-900">Admin Dashboard</h1>
-                <button onClick={handleLogout} className="flex items-center gap-2 text-red-600 hover:text-red-700">
-                    <LogOut size={20} /> Logout
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Admin Dashboard</h1>
+                <button onClick={handleLogout} className="flex items-center gap-2 text-red-600 hover:text-red-700 bg-red-50 px-3 py-1.5 rounded-md text-sm font-medium">
+                    <LogOut size={18} /> Logout
                 </button>
             </div>
 
-            <div className="mb-6 flex space-x-4 border-b border-slate-200">
+            {/* Stats Cards */}
+            <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                    <p className="text-sm font-medium text-slate-500 uppercase">Today's Orders</p>
+                    <p className="text-2xl font-bold text-slate-900">{todaysOrders.length}</p>
+                </div>
+                <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                    <p className="text-sm font-medium text-slate-500 uppercase">Today's Income</p>
+                    <p className="text-2xl font-bold text-green-600">₹{todaysIncome}</p>
+                </div>
+            </div>
+
+            <div className="mb-6 flex space-x-4 border-b border-slate-200 overflow-x-auto">
                 <button
                     onClick={() => setActiveTab('orders')}
-                    className={`pb-2 px-1 ${activeTab === 'orders' ? 'border-b-2 border-blue-500 text-blue-600 font-medium' : 'text-slate-500'}`}
+                    className={`pb-2 px-1 whitespace-nowrap ${activeTab === 'orders' ? 'border-b-2 border-blue-500 text-blue-600 font-medium' : 'text-slate-500'}`}
                 >
                     Orders
                 </button>
                 <button
                     onClick={() => setActiveTab('slots')}
-                    className={`pb-2 px-1 ${activeTab === 'slots' ? 'border-b-2 border-blue-500 text-blue-600 font-medium' : 'text-slate-500'}`}
+                    className={`pb-2 px-1 whitespace-nowrap ${activeTab === 'slots' ? 'border-b-2 border-blue-500 text-blue-600 font-medium' : 'text-slate-500'}`}
                 >
                     Manage Slots
                 </button>
@@ -134,9 +151,9 @@ export default function AdminDashboard() {
             )}
 
             {activeTab === 'slots' && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-1">
-                        <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200 sticky top-24">
+                <div className="flex flex-col lg:flex-row gap-8">
+                    <div className="w-full lg:w-1/3">
+                        <div className="bg-white p-5 rounded-lg shadow-sm border border-slate-200 sticky top-24">
                             <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                                 <Plus size={20} className="text-blue-500" /> Add New Slot
                             </h3>
@@ -144,7 +161,7 @@ export default function AdminDashboard() {
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Type</label>
                                     <select
-                                        className="block w-full rounded-md border-slate-300 shadow-sm border p-2"
+                                        className="block w-full rounded-md border-slate-300 shadow-sm border p-2 bg-white"
                                         value={newSlot.slot_type}
                                         onChange={e => setNewSlot({ ...newSlot, slot_type: e.target.value })}
                                     >
@@ -168,7 +185,7 @@ export default function AdminDashboard() {
                                     onChange={e => setNewSlot({ ...newSlot, time: e.target.value })}
                                     required
                                 />
-                                <button className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
+                                <button className="w-full bg-blue-600 text-white py-2.5 rounded-md hover:bg-blue-700 font-medium transition shadow-sm">
                                     Add Slot
                                 </button>
                             </form>

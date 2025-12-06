@@ -55,8 +55,9 @@ export default function OrderCard({ order, isAdmin, onUpdateStatus }) {
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center gap-2 font-medium text-slate-900">
+                <div className="flex items-center gap-4 font-medium text-slate-900">
                     <span>{order.num_clothes} Clothes</span>
+                    <span className="text-green-600">Total: ₹{order.num_clothes * 8}</span>
                 </div>
             </div>
 
