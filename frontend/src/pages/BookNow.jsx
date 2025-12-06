@@ -6,6 +6,7 @@ import InputField from '../components/InputField'
 import SlotPicker from '../components/SlotPicker'
 import { useNavigate } from 'react-router-dom'
 import { CheckCircle } from 'lucide-react'
+import Loader from '../components/Loader'
 
 export default function BookNow() {
     const navigate = useNavigate()
@@ -199,7 +200,7 @@ export default function BookNow() {
 
                     <div className="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
                         <h2 className="text-lg font-semibold text-slate-800 border-b pb-4 mb-4">Pickup Slot</h2>
-                        {loading ? <p className="text-slate-500">Loading slots...</p> : (
+                        {loading ? <div className="py-8"><Loader small /></div> : (
                             <SlotPicker
                                 label="Select a time"
                                 slots={slots.pickup || []}
@@ -212,7 +213,7 @@ export default function BookNow() {
                     {formData.pickup_slot_id && (
                         <div className="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
                             <h2 className="text-lg font-semibold text-slate-800 border-b pb-4 mb-4">Dropoff Slot</h2>
-                            {loading ? <p className="text-slate-500">Loading slots...</p> : (
+                            {loading ? <div className="py-8"><Loader small /></div> : (
                                 <SlotPicker
                                     label="Select a time (at least 1 day after pickup)"
                                     slots={availableDropoffSlots}
