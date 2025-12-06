@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Shirt, Menu, X, Search } from 'lucide-react'
+import { Shirt, Menu, X, Search, CalendarPlus } from 'lucide-react'
 
 export default function Layout({ children }) {
     const [isOpen, setIsOpen] = React.useState(false)
@@ -43,7 +43,14 @@ export default function Layout({ children }) {
                         </div>
 
                         {/* Mobile Menu Button */}
-                        <div className="flex items-center gap-4 sm:hidden">
+                        <div className="flex items-center gap-3 sm:hidden">
+                            <Link
+                                to="/"
+                                className="text-slate-500 hover:text-slate-700 p-1"
+                                title="Book Now"
+                            >
+                                <CalendarPlus size={22} />
+                            </Link>
                             <Link
                                 to="/track"
                                 className="text-slate-500 hover:text-slate-700 p-1"
