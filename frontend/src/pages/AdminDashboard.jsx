@@ -27,7 +27,8 @@ export default function AdminDashboard() {
     const [newSlot, setNewSlot] = useState({
         slot_type: 'pickup',
         date: '',
-        time: ''
+        startTime: '',
+        endTime: ''
     })
 
     // Auth check
@@ -41,7 +42,7 @@ export default function AdminDashboard() {
             }
         })
 
-        // Listen for auth changes (keep user logged in or handle explicit logout)
+        // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
             if (event === 'SIGNED_OUT') {
                 navigate('/admin-login')
@@ -77,28 +78,68 @@ export default function AdminDashboard() {
     }
 
     const handleUpdateStatus = async (orderId, newStatus) => {
+        // Optimistic Update
+        setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o))
+        showToast(`Order status updated to ${newStatus}`)
+
         try {
             await adminUpdateStatus(orderId, newStatus)
-            setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o))
-            showToast(`Order status updated to ${newStatus}`)
         } catch (error) {
             console.error(error)
             showToast('Failed to update status', 'error')
+            // Revert on failure
+            loadData()
         }
+    }
+
+    const formatTime = (timeStr) => {
+        if (!timeStr) return ''
+        const [hours, minutes] = timeStr.split(':')
+        const h = parseInt(hours)
+        const ampm = h >= 12 ? 'PM' : 'AM'
+        const h12 = h % 12 || 12
+        return `${h12}:${minutes} ${ampm}`
     }
 
     const handleAddSlot = async (e) => {
         e.preventDefault()
+        if (!newSlot.startTime || !newSlot.endTime) {
+            showToast('Please select both start and end times', 'error')
+            return
+        }
+
+        const timeRange = `${formatTime(newSlot.startTime)} - ${formatTime(newSlot.endTime)}`
+        const slotPayload = {
+            slot_type: newSlot.slot_type,
+            date: newSlot.date,
+            time: timeRange
+        }
+
+        // Optimistic UI Update
+        const optimisticId = Math.random().toString(36).substr(2, 9)
+        const optimisticSlot = { ...slotPayload, id: optimisticId, is_active: true }
+
+        setSlots(prev => ({
+            ...prev,
+            [newSlot.slot_type]: [...(prev[newSlot.slot_type] || []), optimisticSlot]
+        }))
+
+        showToast('Slot added (saving...)')
+        setIsAddSlotOpen(false)
+        setNewSlot({ slot_type: 'pickup', date: '', startTime: '', endTime: '' }) // Reset
+
         try {
-            await adminAddSlot(newSlot)
-            showToast('Slot added successfully!')
-            setNewSlot({ ...newSlot, time: '' })
+            await adminAddSlot(slotPayload)
+            showToast('Slot saved successfully!')
+            // Reload to get real ID
             const updatedSlots = await getSlots()
             setSlots(updatedSlots)
-            setIsAddSlotOpen(false)
         } catch (error) {
             console.error(error)
             showToast('Failed to add slot', 'error')
+            // Revert
+            const updatedSlots = await getSlots()
+            setSlots(updatedSlots)
         }
     }
 
@@ -109,15 +150,25 @@ export default function AdminDashboard() {
 
     const handleRemoveSlot = async () => {
         if (!slotToDelete) return
+
+        // Optimistic Update
+        const id = slotToDelete
+        setSlots(prev => {
+            const newPickup = prev.pickup.filter(s => s.id !== id)
+            const newDropoff = prev.dropoff.filter(s => s.id !== id)
+            return { pickup: newPickup, dropoff: newDropoff }
+        })
+
+        showToast('Slot removed')
+        setIsDeleteModalOpen(false)
+
         try {
-            await adminRemoveSlot(slotToDelete)
-            const updatedSlots = await getSlots()
-            setSlots(updatedSlots)
-            showToast('Slot removed successfully')
-            setIsDeleteModalOpen(false)
+            await adminRemoveSlot(id)
         } catch (error) {
             console.error(error)
             showToast('Failed to remove slot', 'error')
+            // Revert
+            loadData()
         }
     }
 
@@ -282,15 +333,26 @@ export default function AdminDashboard() {
                         value={newSlot.date}
                         onChange={e => setNewSlot({ ...newSlot, date: e.target.value })}
                         required
+                        className="w-full" // Explicit width
                     />
-                    <InputField
-                        id="slot-time"
-                        label="Time Range"
-                        placeholder="e.g. 9:00 AM - 12:00 PM"
-                        value={newSlot.time}
-                        onChange={e => setNewSlot({ ...newSlot, time: e.target.value })}
-                        required
-                    />
+                    <div className="grid grid-cols-2 gap-4">
+                        <InputField
+                            id="slot-start-time"
+                            label="Start Time"
+                            type="time"
+                            value={newSlot.startTime}
+                            onChange={e => setNewSlot({ ...newSlot, startTime: e.target.value })}
+                            required
+                        />
+                        <InputField
+                            id="slot-end-time"
+                            label="End Time"
+                            type="time"
+                            value={newSlot.endTime}
+                            onChange={e => setNewSlot({ ...newSlot, endTime: e.target.value })}
+                            required
+                        />
+                    </div>
                     <div className="pt-2 flex gap-3">
                         <button
                             type="button"
