@@ -9,7 +9,7 @@ export default function InputField({ label, id, type = 'text', ...props }) {
             <input
                 id={id}
                 type={type}
-                className="block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-2 border"
+                className="block w-full min-w-0 rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
                 {...props}
             />
         </div>
