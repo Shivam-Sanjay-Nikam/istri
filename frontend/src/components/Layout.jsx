@@ -1,15 +1,17 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Shirt, Menu, X, Search, CalendarPlus } from 'lucide-react'
+import { Shirt, Menu, X, Search, CalendarPlus, Languages } from 'lucide-react'
+import { useLanguage } from '../context/LanguageContext'
 
 export default function Layout({ children }) {
     const [isOpen, setIsOpen] = React.useState(false)
     const location = useLocation()
+    const { t, toggleLanguage, language } = useLanguage()
 
     const navs = [
-        { name: 'Book Now', path: '/' },
-        { name: 'Track Order', path: '/track' },
-        { name: 'Admin', path: '/admin-login' },
+        { name: t('nav.bookNow'), path: '/' },
+        { name: t('nav.trackOrder'), path: '/track' },
+        { name: t('nav.admin'), path: '/admin-login' },
     ]
 
     return (
@@ -22,7 +24,7 @@ export default function Layout({ children }) {
                                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
                                     <Shirt size={20} />
                                 </div>
-                                <span className="font-bold text-xl text-slate-800">Istriwale</span>
+                                <span className="font-bold text-xl text-slate-800">{t('nav.brand')}</span>
                             </Link>
                         </div>
 
@@ -40,10 +42,26 @@ export default function Layout({ children }) {
                                     {nav.name}
                                 </Link>
                             ))}
+                            <button
+                                onClick={toggleLanguage}
+                                className="flex items-center gap-1 px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded-full text-sm font-medium text-slate-700 transition-colors"
+                            >
+                                <Languages size={16} />
+                                {language === 'en' ? 'हिंदी' : 'English'}
+                            </button>
                         </div>
 
                         {/* Mobile Menu Button */}
                         <div className="flex items-center gap-3 sm:hidden">
+                            <button
+                                onClick={toggleLanguage}
+                                className="text-slate-500 hover:text-slate-700 p-1"
+                                title="Switch Language"
+                            >
+                                <span className="font-bold text-xs border border-slate-300 rounded px-1 py-0.5">
+                                    {language === 'en' ? 'हि' : 'EN'}
+                                </span>
+                            </button>
                             <Link
                                 to="/"
                                 className="text-slate-500 hover:text-slate-700 p-1"

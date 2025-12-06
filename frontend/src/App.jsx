@@ -9,25 +9,28 @@ const AdminLogin = lazy(() => import('./pages/AdminLogin'))
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'))
 
 import Loader from './components/Loader'
+import { LanguageProvider } from './context/LanguageContext'
 
 // ... imports ...
 
 function App() {
     return (
-        <BrowserRouter>
-            <Suspense fallback={
-                <div className="min-h-screen flex items-center justify-center bg-slate-50">
-                    <Loader />
-                </div>
-            }>
-                <Routes>
-                    <Route path="/" element={<BookNow />} />
-                    <Route path="/track" element={<TrackOrder />} />
-                    <Route path="/admin-login" element={<AdminLogin />} />
-                    <Route path="/admin-dashboard" element={<AdminDashboard />} />
-                </Routes>
-            </Suspense>
-        </BrowserRouter>
+        <LanguageProvider>
+            <BrowserRouter>
+                <Suspense fallback={
+                    <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                        <Loader />
+                    </div>
+                }>
+                    <Routes>
+                        <Route path="/" element={<BookNow />} />
+                        <Route path="/track" element={<TrackOrder />} />
+                        <Route path="/admin-login" element={<AdminLogin />} />
+                        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                    </Routes>
+                </Suspense>
+            </BrowserRouter>
+        </LanguageProvider>
     )
 }
 

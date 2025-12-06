@@ -7,9 +7,11 @@ import SlotPicker from '../components/SlotPicker'
 import { useNavigate } from 'react-router-dom'
 import { CheckCircle } from 'lucide-react'
 import Loader from '../components/Loader'
+import { useLanguage } from '../context/LanguageContext'
 
 export default function BookNow() {
     const navigate = useNavigate()
+    const { t } = useLanguage()
     const [loading, setLoading] = useState(true)
     const [submitting, setSubmitting] = useState(false)
     const [success, setSuccess] = useState(false)
@@ -136,11 +138,11 @@ export default function BookNow() {
         <Layout>
             <div className="max-w-2xl mx-auto">
                 <div className="mb-6">
-                    <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Book Service</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold text-slate-900">{t('home.title')}</h1>
                     <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm font-medium">
-                        ✨ Specialty: Premium Ironing @ ₹8/piece
+                        ✨ {t('home.specialty')}
                     </div>
-                    <p className="text-slate-500 mt-2">Schedule your pickup and dropoff.</p>
+                    <p className="text-slate-500 mt-2">{t('home.subtitle')}</p>
                 </div>
 
                 {error && (
@@ -151,11 +153,11 @@ export default function BookNow() {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="bg-white p-5 rounded-lg shadow-sm border border-slate-200 space-y-4">
-                        <h2 className="text-lg font-semibold text-slate-800 border-b pb-2">Details</h2>
+                        <h2 className="text-lg font-semibold text-slate-800 border-b pb-2">{t('home.details')}</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <InputField
                                 id="name"
-                                label="Full Name"
+                                label={t('home.fullName')}
                                 value={formData.name}
                                 onChange={handleChange}
                                 required
@@ -163,7 +165,7 @@ export default function BookNow() {
                             />
                             <InputField
                                 id="phone"
-                                label="Phone Number"
+                                label={t('home.phone')}
                                 value={formData.phone}
                                 onChange={handleChange}
                                 required
@@ -172,7 +174,7 @@ export default function BookNow() {
                         </div>
                         <InputField
                             id="address"
-                            label="Address"
+                            label={t('home.address')}
                             value={formData.address}
                             onChange={handleChange}
                             required
@@ -182,7 +184,7 @@ export default function BookNow() {
                             <div className="flex-grow w-full sm:w-auto">
                                 <InputField
                                     id="num_clothes"
-                                    label="Number of Clothes"
+                                    label={t('home.numClothes')}
                                     type="number"
                                     value={formData.num_clothes}
                                     onChange={handleChange}
@@ -191,18 +193,18 @@ export default function BookNow() {
                                 />
                             </div>
                             <div className="flex-shrink-0 w-full sm:w-auto p-2 bg-white rounded border border-slate-200 shadow-sm">
-                                <span className="block text-xs text-slate-500 uppercase font-bold tracking-wider">Total Cost</span>
+                                <span className="block text-xs text-slate-500 uppercase font-bold tracking-wider">{t('home.totalCost')}</span>
                                 <span className="block text-xl font-bold text-green-600">₹{totalCost}</span>
                             </div>
                         </div>
-                        <p className="text-xs text-slate-500 italic">* Rate: ₹8 per piece</p>
+                        <p className="text-xs text-slate-500 italic">{t('home.rateRef')}</p>
                     </div>
 
                     <div className="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
-                        <h2 className="text-lg font-semibold text-slate-800 border-b pb-4 mb-4">Pickup Slot</h2>
+                        <h2 className="text-lg font-semibold text-slate-800 border-b pb-4 mb-4">{t('home.pickupSlot')}</h2>
                         {loading ? <div className="py-8"><Loader small /></div> : (
                             <SlotPicker
-                                label="Select a time"
+                                label={t('home.selectTime')}
                                 slots={slots.pickup || []}
                                 selectedSlotId={formData.pickup_slot_id}
                                 onSelect={(id) => setFormData(prev => ({ ...prev, pickup_slot_id: id }))}
@@ -212,10 +214,10 @@ export default function BookNow() {
 
                     {formData.pickup_slot_id && (
                         <div className="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
-                            <h2 className="text-lg font-semibold text-slate-800 border-b pb-4 mb-4">Dropoff Slot</h2>
+                            <h2 className="text-lg font-semibold text-slate-800 border-b pb-4 mb-4">{t('home.dropoffSlot')}</h2>
                             {loading ? <div className="py-8"><Loader small /></div> : (
                                 <SlotPicker
-                                    label="Select a time (at least 1 day after pickup)"
+                                    label={t('home.selectTimeDrop')}
                                     slots={availableDropoffSlots}
                                     selectedSlotId={formData.dropoff_slot_id}
                                     onSelect={(id) => setFormData(prev => ({ ...prev, dropoff_slot_id: id }))}
@@ -225,21 +227,19 @@ export default function BookNow() {
                     )}
 
                     <div className="pt-4 pb-8">
-                        <div className="pt-4 pb-8">
-                            {submitting ? (
-                                <div className="py-4 bg-slate-50 rounded-lg border border-slate-100">
-                                    <Loader small />
-                                    <p className="text-center text-sm text-slate-500 mt-2">Confirming your booking...</p>
-                                </div>
-                            ) : (
-                                <button
-                                    type="submit"
-                                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                                >
-                                    {`Confirm Booking • ₹${totalCost}`}
-                                </button>
-                            )}
-                        </div>
+                        {submitting ? (
+                            <div className="py-4 bg-slate-50 rounded-lg border border-slate-100">
+                                <Loader small />
+                                <p className="text-center text-sm text-slate-500 mt-2">Confirming your booking...</p>
+                            </div>
+                        ) : (
+                            <button
+                                type="submit"
+                                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                            >
+                                {`${t('home.confirmBooking')} • ₹${totalCost}`}
+                            </button>
+                        )}
                     </div>
                 </form>
             </div>
